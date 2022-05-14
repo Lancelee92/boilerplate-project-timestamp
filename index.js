@@ -13,6 +13,24 @@ app.use(cors({optionsSuccessStatus: 200}));  // some legacy browsers choke on 20
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
 
+app.get("/api/:timestamp", function (req, res) {
+  const dateRegex = /[0-9]{13}/;
+
+  const inDate = dateRegex.test(req.params.timestamp) == true ? (new Date(parseInt(req.params.timestamp))) :(new Date(req.params.timestamp));
+
+  if(inDate.toString() == 'Invalid Date'){
+    res.json({ error : "Invalid Date" });
+  }
+  else {
+    res.json({unix: inDate.getTime(), utc: inDate.toUTCString()});
+  }
+  
+});
+
+app.get("/api", function (req, res) {
+  res.json({unix: new Date().getTime(), utc: new Date().toUTCString()});
+});
+
 // http://expressjs.com/en/starter/basic-routing.html
 app.get("/", function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
